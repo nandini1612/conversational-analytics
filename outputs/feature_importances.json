@@ -1,0 +1,126 @@
+{
+  "importances": {
+    "mean_sentiment": 0.03912258024083705,
+    "final_sentiment": 0.03866049348920187,
+    "sentiment_std": 0.04021740551603082,
+    "talk_time_ratio": 0.04424882821048244,
+    "avg_words_agent": 0.042316288989576976,
+    "avg_words_customer": 0.03745309471133214,
+    "interruption_count": 0.0485512901839669,
+    "resolution_flag": 0.040053684230310346,
+    "empathy_density": 0.04686905907421523,
+    "apology_count": 0.04292429191643673,
+    "transfer_count": 0.052927200945588435,
+    "duration_ordinal": 0.038874865269047,
+    "duration_deviation": 0.03898711663743132,
+    "repeat_contact": 0.033120995343424026,
+    "issue_type_billing": 0.04008659050936816,
+    "issue_type_technical": 0.03839808910809419,
+    "issue_type_account": 0.037708079175158817,
+    "issue_type_payment": 0.040763095774418855,
+    "issue_type_network": 0.039059693778406804,
+    "issue_type_delivery": 0.04509326484079472,
+    "issue_type_returns": 0.03680737710344742,
+    "issue_type_complaint": 0.05143377896425776,
+    "issue_type_upgrade": 0.03972974298738102,
+    "issue_type_cancellation": 0.04659309300079104
+  },
+  "sorted": [
+    [
+      "transfer_count",
+      0.052927200945588435
+    ],
+    [
+      "issue_type_complaint",
+      0.05143377896425776
+    ],
+    [
+      "interruption_count",
+      0.0485512901839669
+    ],
+    [
+      "empathy_density",
+      0.04686905907421523
+    ],
+    [
+      "issue_type_cancellation",
+      0.04659309300079104
+    ],
+    [
+      "issue_type_delivery",
+      0.04509326484079472
+    ],
+    [
+      "talk_time_ratio",
+      0.04424882821048244
+    ],
+    [
+      "apology_count",
+      0.04292429191643673
+    ],
+    [
+      "avg_words_agent",
+      0.042316288989576976
+    ],
+    [
+      "issue_type_payment",
+      0.040763095774418855
+    ],
+    [
+      "sentiment_std",
+      0.04021740551603082
+    ],
+    [
+      "issue_type_billing",
+      0.04008659050936816
+    ],
+    [
+      "resolution_flag",
+      0.040053684230310346
+    ],
+    [
+      "issue_type_upgrade",
+      0.03972974298738102
+    ],
+    [
+      "mean_sentiment",
+      0.03912258024083705
+    ],
+    [
+      "issue_type_network",
+      0.039059693778406804
+    ],
+    [
+      "duration_deviation",
+      0.03898711663743132
+    ],
+    [
+      "duration_ordinal",
+      0.038874865269047
+    ],
+    [
+      "final_sentiment",
+      0.03866049348920187
+    ],
+    [
+      "issue_type_technical",
+      0.03839808910809419
+    ],
+    [
+      "issue_type_account",
+      0.037708079175158817
+    ],
+    [
+      "avg_words_customer",
+      0.03745309471133214
+    ],
+    [
+      "issue_type_returns",
+      0.03680737710344742
+    ],
+    [
+      "repeat_contact",
+      0.033120995343424026
+    ]
+  ]
+}
