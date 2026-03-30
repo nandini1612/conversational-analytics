@@ -1,5 +1,5 @@
-from preprocessing import parse_transcript, add_timestamps
-from preprocessing import compute_turn_sentiments, extract_sentiment_features, compute_arc
+from preprocessing import parse_transcript, add_synthetic_timestamps
+from preprocessing import compute_turn_sentiments, extract_conversation_features, compute_arc
 
 # Sample transcript
 raw_text = """Turn 1: AGENT: Hello how can I help?
@@ -11,13 +11,13 @@ Turn 4: CUSTOMER: Thank you, it's working now"""
 turns = parse_transcript(raw_text)
 
 # Step 2: Add timestamps
-turns = add_timestamps(turns, "medium")
+turns = add_synthetic_timestamps(turns, "medium")
 
 # Step 3: Get sentiment scores
 scores = compute_turn_sentiments(turns)
 
 # Step 4: Extract features
-features = extract_sentiment_features(turns)
+features = extract_conversation_features(turns)
 
 # Step 5: Compute arc
 arc = compute_arc(scores)

@@ -11,14 +11,14 @@ from preprocessing import (
 
 # Input and output files
 input_files = [
-    "../data/processed/train.csv",
-    "../data/processed/val.csv",
-    "../data/processed/test.csv"
+    "../../data/processed/train.csv",
+    "../../data/processed/val.csv",
+    "../../data/processed/test.csv"
 ]
 output_files = [
-    "../data/processed/train_features.csv",
-    "../data/processed/val_features.csv",
-    "../data/processed/test_features.csv"
+    "../../data/processed/train_features.csv",
+    "../../data/processed/val_features.csv",
+    "../../data/processed/test_features.csv"
 
 ]
 

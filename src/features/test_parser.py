@@ -1,4 +1,4 @@
-from preprocessing import parse_transcript, add_timestamps
+from preprocessing import parse_transcript, add_synthetic_timestamps
 
 # Create 20 test transcripts
 test_data = [
@@ -12,7 +12,7 @@ test_data = [
 # Run tests
 for i, transcript in enumerate(test_data):
     parsed = parse_transcript(transcript)
-    parsed = add_timestamps(parsed, "medium")
+    parsed = add_synthetic_timestamps(parsed, "medium")
 
     print(f"\nTest Case {i+1}")
     print(parsed)
