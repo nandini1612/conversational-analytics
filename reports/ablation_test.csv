@@ -1,0 +1,6 @@
+run,features_removed,n_features,mae,mae_delta
+all_features,none,24,1.1276,0.0
+remove_A_sentiment,A_sentiment,21,1.1255,-0.002
+remove_B_structure,B_structure,19,1.1254,-0.0022
+remove_C_agent,C_agent,21,1.1299,0.0024
+remove_D_metadata,D_metadata,11,1.14,0.0125

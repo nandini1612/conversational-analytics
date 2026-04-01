@@ -1,22 +1,33 @@
 """
-Phase 4 — Ensemble
+Phase 4 — Ensemble Weight Selection
 Person 2 (Models & Evaluation)
 
-Combines Ridge + RF + DistilBERT predictions with equal weights (1/3 each).
-If one model clearly dominates on validation, you can adjust weights here
-and update ensemble_weights.json before Phase 5.
+Combines Ridge + RF + DistilBERT predictions using a weighted sum.
+Evaluates at least 4 weight configurations on the validation set and
+selects the one with the lowest validation MAE.
 
-Saves ensemble_weights.json → Person 3 needs this for the /predict endpoint.
+If BERT val preds are unavailable (BERT_READY=False), falls back to
+a two-model Ridge+RF ensemble with renormalised weights.
 
-Run after phase3_bert.ipynb (Colab) has saved bert_val_preds.npy locally.
-If BERT preds aren't ready yet, set BERT_READY = False to run a 2-model
-ensemble for now and update when they arrive.
+Outputs:
+  reports/ensemble_weights.json   ← Person 3 needs this for /predict endpoint
+  reports/ensemble_val_preds.npy
+
+RUN ORDER:
+  python src/models/ridge.py
+  python src/models/random_forest.py
+  [notebooks/bert.ipynb on Colab]  ← optional
+  python src/models/ensemble.py    ← this file
 """
 
+import sys
 import numpy as np
 import pandas as pd
 import json
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(ROOT / "notebooks"))
 
 from phase0_skeleton import (
     N_VAL,
@@ -28,77 +39,107 @@ from phase0_skeleton import (
 
 np.random.seed(RANDOM_STATE)
 
-OUTPUTS_DIR = Path(__file__).parent / "outputs"
-BERT_READY = False  # ← set True once phase3_bert.ipynb has run
+OUTPUTS_DIR = ROOT / "outputs"          # ridge_val_preds.npy lives here
+MODELS_SAVED_DIR = ROOT / "models_saved"  # rf_val_preds.npy lives here
+REPORTS_DIR = ROOT / "reports"
+REPORTS_DIR.mkdir(exist_ok=True)
+
+# Set True once notebooks/bert.ipynb has run and saved bert_val_preds.npy
+BERT_READY = True
 
 
-def load_val_preds() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    """Load val predictions saved by Phase 1, 2, and 3. Returns (y_val, ridge, rf, bert)."""
-
-    # Ground truth — dummy or real depending on what Phase 1/2 used
-    _, y_val = dummy_features(N_VAL, seed=RANDOM_STATE + 1)
-
+def load_val_preds():
+    """
+    Load val predictions from Phase 1 (ridge) and Phase 2 (rf).
+    Also loads y_val from val_features.csv.
+    """
     ridge_path = OUTPUTS_DIR / "ridge_val_preds.npy"
-    rf_path = OUTPUTS_DIR / "rf_val_preds.npy"
-    bert_path = OUTPUTS_DIR / "bert_val_preds.npy"
+    rf_path = MODELS_SAVED_DIR / "rf_val_preds.npy"
+    bert_path = MODELS_SAVED_DIR / "bert_val_preds.npy"
 
     if not ridge_path.exists():
         raise FileNotFoundError(
-            "ridge_val_preds.npy missing — run phase1_ridge.py first"
+            f"ridge_val_preds.npy missing at {ridge_path} — run src/models/ridge.py first"
         )
     if not rf_path.exists():
         raise FileNotFoundError(
-            "rf_val_preds.npy missing — run phase2_random_forest.py first"
+            f"rf_val_preds.npy missing at {rf_path} — run src/models/random_forest.py first"
         )
 
     ridge_preds = np.load(ridge_path)
     rf_preds = np.load(rf_path)
 
+    # Load y_val from CSV
+    val_csv = ROOT / "data" / "processed" / "val_features.csv"
+    if val_csv.exists():
+        import pandas as pd
+        val_df = pd.read_csv(val_csv)
+        # Fix repeat_contact
+        if "repeat_contact" in val_df.columns:
+            val_df["repeat_contact"] = (
+                val_df["repeat_contact"]
+                .astype(str).str.strip().str.lower()
+                .map({"yes": 1, "no": 0, "1": 1, "0": 0})
+                .fillna(0).astype(float)
+            )
+        y_val = val_df["csat_score"].values.astype(float)
+    else:
+        print("  [WARN] val_features.csv not found — using dummy y_val")
+        _, y_val = dummy_features(N_VAL, seed=RANDOM_STATE + 1)
+
+    # Align lengths (in case of minor mismatch)
+    n = min(len(y_val), len(ridge_preds), len(rf_preds))
+    y_val = y_val[:n]
+    ridge_preds = ridge_preds[:n]
+    rf_preds = rf_preds[:n]
+
     if BERT_READY:
         if not bert_path.exists():
-            raise FileNotFoundError("bert_val_preds.npy missing but BERT_READY=True")
-        bert_preds = np.load(bert_path)
+            raise FileNotFoundError(
+                f"bert_val_preds.npy missing but BERT_READY=True. "
+                f"Run notebooks/bert.ipynb on Colab first."
+            )
+        bert_preds = np.load(bert_path)[:n]
+        print(f"  Loaded BERT val preds from {bert_path}")
     else:
         print("  [INFO] BERT_READY=False — using dummy BERT preds (uniform random).")
-        print(
-            "         Set BERT_READY=True after phase3_bert.ipynb produces bert_val_preds.npy"
+        print("         Set BERT_READY=True after bert.ipynb produces bert_val_preds.npy")
+        bert_preds = np.clip(
+            np.random.default_rng(99).uniform(1, 5, n), 1.0, 5.0
         )
-        bert_preds = np.clip(np.random.default_rng(99).uniform(1, 5, N_VAL), 1.0, 5.0)
 
     return y_val, ridge_preds, rf_preds, bert_preds
 
 
-def pick_best_weights(
-    y_val: np.ndarray,
-    ridge_preds: np.ndarray,
-    rf_preds: np.ndarray,
-    bert_preds: np.ndarray,
-) -> dict:
+def pick_best_weights(y_val, ridge_preds, rf_preds, bert_preds):
     """
-    Try equal weights and a few alternatives; pick by val MAE.
-    Returns the winning weight dict.
+    Evaluate at least 4 weight configurations on val set.
+    Returns the config with the strictly lowest val MAE.
+    Weights always sum to 1.0.
     """
     candidates = [
-        {"ridge": 1 / 3, "rf": 1 / 3, "bert": 1 / 3},  # equal
-        {"ridge": 0.5, "rf": 0.3, "bert": 0.2},  # Ridge-heavy
-        {"ridge": 0.4, "rf": 0.4, "bert": 0.2},  # RF-heavy
-        {
-            "ridge": 0.5,
-            "rf": 0.5,
-            "bert": 0.0,
-        },  # no BERT (good fallback if BERT is poor)
+        {"ridge": 1/3, "rf": 1/3, "bert": 1/3},       # equal weights
+        {"ridge": 0.5, "rf": 0.3, "bert": 0.2},        # ridge-heavy
+        {"ridge": 0.4, "rf": 0.4, "bert": 0.2},        # balanced
+        {"ridge": 0.3, "rf": 0.5, "bert": 0.2},        # rf-heavy
+        {"ridge": 0.5, "rf": 0.5, "bert": 0.0},        # no BERT (fallback)
+        {"ridge": 0.6, "rf": 0.4, "bert": 0.0},        # ridge-dominant no BERT
     ]
+
+    # Verify all weights sum to 1.0
+    for c in candidates:
+        assert abs(sum(c.values()) - 1.0) < 1e-6, f"Weights don't sum to 1: {c}"
 
     print("\n── Weight search ──")
     best_mae, best_weights = float("inf"), candidates[0]
+
     for w in candidates:
         ens = np.clip(
             w["ridge"] * ridge_preds + w["rf"] * rf_preds + w["bert"] * bert_preds,
-            1.0,
-            5.0,
+            1.0, 5.0,
         )
         m = evaluate(y_val, ens)
-        label = f"r={w['ridge']:.1f} rf={w['rf']:.1f} b={w['bert']:.1f}"
+        label = f"r={w['ridge']:.2f} rf={w['rf']:.2f} b={w['bert']:.2f}"
         print(f"  {label}  →  MAE={m['mae']:.4f}  r={m['pearson_r']:.4f}")
         if m["mae"] < best_mae:
             best_mae, best_weights = m["mae"], w
@@ -114,61 +155,52 @@ def run_phase4():
 
     y_val, ridge_preds, rf_preds, bert_preds = load_val_preds()
 
-    # Individual model metrics for comparison
     print("\n── Individual model val metrics ──")
     r_m = evaluate(y_val, ridge_preds, model_name="Ridge")
     rf_m = evaluate(y_val, rf_preds, model_name="Random Forest")
     b_m = evaluate(
-        y_val,
-        bert_preds,
+        y_val, bert_preds,
         model_name="DistilBERT (dummy)" if not BERT_READY else "DistilBERT",
     )
 
-    # Weight search
     best_weights = pick_best_weights(y_val, ridge_preds, rf_preds, bert_preds)
 
-    # Final ensemble predictions
     ensemble_preds = np.clip(
         best_weights["ridge"] * ridge_preds
         + best_weights["rf"] * rf_preds
         + best_weights["bert"] * bert_preds,
-        1.0,
-        5.0,
+        1.0, 5.0,
     )
     ens_m = evaluate(y_val, ensemble_preds, model_name="Ensemble (val)")
 
-    # Simple confidence interval: ±1 std of the three model predictions per call
+    # CI width
     stacked = np.stack([ridge_preds, rf_preds, bert_preds], axis=1)
     ci_std = stacked.std(axis=1)
     print(f"\n  Mean CI width (±1 std): {ci_std.mean():.4f}")
-    print(f"  This is the confidence_interval field in the predict() output")
 
-    # Summary table
-    print("\n── Val metrics table (preview of Phase 5 format) ──")
-    table = metrics_table(
-        {
-            "Ridge": r_m,
-            "Random Forest": rf_m,
-            "DistilBERT": b_m,
-            "Ensemble": ens_m,
-        }
-    )
+    print("\n── Val metrics table ──")
+    table = metrics_table({
+        "Ridge": r_m,
+        "Random Forest": rf_m,
+        "DistilBERT": b_m,
+        "Ensemble": ens_m,
+    })
     print(table.to_string())
 
-    # Save ensemble weights JSON — Person 3 needs this
-    weights_path = Path(__file__).parent / "outputs" / "ensemble_weights.json"
+    # Save ensemble weights → reports/ensemble_weights.json
+    weights_path = REPORTS_DIR / "ensemble_weights.json"
     with open(weights_path, "w") as f:
         json.dump(best_weights, f, indent=2)
     print(f"\n  Saved → {weights_path}  ← hand off to Person 3")
 
-    # Save ensemble val preds for Phase 5
-    np.save(OUTPUTS_DIR / "ensemble_val_preds.npy", ensemble_preds)
+    # Save ensemble val preds
+    np.save(REPORTS_DIR / "ensemble_val_preds.npy", ensemble_preds)
 
     print("\n" + "=" * 60)
     print("PHASE 4 COMPLETE")
     print(f"  Weights: {best_weights}")
     print(f"  Val MAE: {ens_m['mae']:.4f}")
-    print("  Next: run phase5_evaluate.py")
+    print("  Next: python src/evaluation/evaluate.py")
     print("=" * 60)
 
     return best_weights, ens_m

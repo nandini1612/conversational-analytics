@@ -1,0 +1,4 @@
+# file: C:\Users\NI\OneDrive\Desktop\Study_material\Academic\conv_analytics\notebooks\phase0_skeleton.py
+# hypothesis_version: 6.151.10
+
+[-1.0, 0.0, 0.15, 0.5, 0.7, 1.0, 1.8, 2.0, 3.0, 5.0, 100, 2500, '=', 'DistilBERT', 'Ensemble', 'F1 (≥3.0)', 'MAE', 'Model', 'Pearson r', 'RMSE', 'Random Forest', 'Ridge', 'Ridge — val (dummy)', '__main__', 'apology_count', 'avg_agent_words', 'avg_customer_words', 'csat_score', 'dtype', 'duration_deviation', 'duration_ordinal', 'empathy_density', 'f1_binary', 'ignore', 'intent_account', 'intent_billing', 'intent_complaint', 'intent_delivery', 'intent_login', 'intent_network', 'intent_payment', 'intent_refund', 'intent_subscription', 'intent_technical', 'interruption_count', 'last_20_sentiment', 'mae', 'max', 'mean_sentiment', 'min', 'pearson_r', 'repeat_contact', 'resolution_flag', 'rmse', 'std_sentiment', 'talk_time_ratio', 'train', 'transfer_count', 'unknown']

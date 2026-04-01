@@ -1,0 +1,4 @@
+# file: C:\Users\NI\OneDrive\Desktop\Study_material\Academic\conv_analytics\src\models\random_forest.py
+# hypothesis_version: 6.151.10
+
+[0.0, 0.5, 1.0, 5.0, 100, 200, 500, '-1', '-1.0', '.1', '0', '0.0', '1', '1.0', '=', 'PHASE 2 COMPLETE', '__main__', 'coerce', 'csat_score', 'data', 'duration_deviation', 'duration_ordinal', 'first', 'importances', 'inf', 'long', 'mae', 'max_depth', 'medium', 'min_samples_leaf', 'models', 'models_saved', 'n_estimators', 'nan', 'no', 'notebooks', 'params', 'processed', 'repeat_contact', 'rf_model.pkl', 'rf_search.csv', 'rf_val_preds.npy', 'short', 'sorted', 'train', 'train_features.csv', 'val', 'val_features.csv', 'w', 'wb', 'yes']
