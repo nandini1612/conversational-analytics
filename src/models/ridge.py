@@ -42,11 +42,13 @@ from phase0_skeleton import (
 
 np.random.seed(RANDOM_STATE)
 
-FEATURES_DIR = ROOT / "data" / "processed"
-MODELS_DIR = ROOT / "models"
-OUTPUTS_DIR = ROOT / "outputs"
+FEATURES_DIR  = ROOT / "data" / "processed"
+MODELS_DIR    = ROOT / "models"
+OUTPUTS_DIR   = ROOT / "outputs" / "predictions"
+METRICS_DIR   = ROOT / "outputs" / "metrics"
 MODELS_DIR.mkdir(exist_ok=True)
-OUTPUTS_DIR.mkdir(exist_ok=True)
+OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
+METRICS_DIR.mkdir(parents=True, exist_ok=True)
 
 USE_DUMMY_DATA = False
 
@@ -204,7 +206,7 @@ def run_alpha_search(X_train, y_train, X_val, y_val):
     print(f"\n  Best alpha = {best_alpha}  (val MAE = {results[best_alpha]['mae']:.4f})")
 
     search_df = pd.DataFrame([{"alpha": a, **m} for a, m in results.items()])
-    search_path = OUTPUTS_DIR / "ridge_alpha_search.csv"
+    search_path = METRICS_DIR / "ridge_alpha_search.csv"
     search_df.to_csv(search_path, index=False)
     print(f"  Saved alpha search → {search_path}")
 
@@ -263,7 +265,7 @@ def run_ablation(X_train, y_train, X_val, y_val, col_names, best_alpha):
         })
 
     ablation_df = pd.DataFrame(ablation_rows)
-    ablation_path = OUTPUTS_DIR / "ablation_results.csv"
+    ablation_path = METRICS_DIR / "ablation_val.csv"
     ablation_df.to_csv(ablation_path, index=False)
     print(f"\n  Saved ablation results → {ablation_path}")
 
@@ -302,6 +304,8 @@ def run_phase1():
 
     # Save val predictions for Phase 4
     preds_path = OUTPUTS_DIR / "ridge_val_preds.npy"
+
+    preds_path = OUTPUTS_DIR / "ridge_val_preds.npy"
     np.save(preds_path, val_preds)
     print(f"  Saved val predictions → {preds_path}")
 
@@ -311,8 +315,8 @@ def run_phase1():
     print(f"  Val MAE:       {final_metrics['mae']:.4f}")
     print(f"  Val Pearson r: {final_metrics['pearson_r']:.4f}")
     print(f"  Files: models/ridge_model.pkl, models/scaler.pkl,")
-    print(f"         outputs/ridge_alpha_search.csv, outputs/ridge_val_preds.npy,")
-    print(f"         outputs/ablation_results.csv")
+    print(f"         outputs/metrics/ridge_alpha_search.csv, outputs/predictions/ridge_val_preds.npy,")
+    print(f"         outputs/metrics/ablation_val.csv")
     print("=" * 60)
 
     return ridge, best_alpha, final_metrics, ablation_df

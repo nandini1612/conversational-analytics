@@ -6,3 +6,6 @@ __pycache__/
 data/raw/
 models/
 outputs/
+.kiro/
+.hypothesis/
+models_saved/

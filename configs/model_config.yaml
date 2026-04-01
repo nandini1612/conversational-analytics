@@ -1,0 +1,26 @@
+# ClearSignal — Model Configuration
+# Single source of truth for all hyperparameters and paths
+
+ridge:
+  best_alpha: 100.0
+  alpha_candidates: [0.01, 0.1, 1.0, 10.0, 100.0]
+
+random_forest:
+  n_estimators: 100
+  max_depth: 10
+  min_samples_leaf: 1
+
+ensemble:
+  weights:
+    ridge: 0.6
+    rf: 0.4
+    bert: 0.0
+  bert_ready: false
+
+paths:
+  models_dir: models/
+  bert_weights_dir: models/bert_weights/
+  predictions_dir: outputs/predictions/
+  metrics_dir: outputs/metrics/
+  figures_dir: outputs/figures/
+  features_dir: data/processed/

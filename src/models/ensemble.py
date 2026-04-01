@@ -39,10 +39,10 @@ from phase0_skeleton import (
 
 np.random.seed(RANDOM_STATE)
 
-OUTPUTS_DIR = ROOT / "outputs"          # ridge_val_preds.npy lives here
-MODELS_SAVED_DIR = ROOT / "models_saved"  # rf_val_preds.npy lives here
-REPORTS_DIR = ROOT / "reports"
-REPORTS_DIR.mkdir(exist_ok=True)
+PREDICTIONS_DIR = ROOT / "outputs" / "predictions"
+METRICS_DIR     = ROOT / "outputs" / "metrics"
+METRICS_DIR.mkdir(parents=True, exist_ok=True)
+PREDICTIONS_DIR.mkdir(parents=True, exist_ok=True)
 
 # Set True once notebooks/bert.ipynb has run and saved bert_val_preds.npy
 BERT_READY = True
@@ -53,9 +53,9 @@ def load_val_preds():
     Load val predictions from Phase 1 (ridge) and Phase 2 (rf).
     Also loads y_val from val_features.csv.
     """
-    ridge_path = OUTPUTS_DIR / "ridge_val_preds.npy"
-    rf_path = MODELS_SAVED_DIR / "rf_val_preds.npy"
-    bert_path = MODELS_SAVED_DIR / "bert_val_preds.npy"
+    ridge_path = PREDICTIONS_DIR / "ridge_val_preds.npy"
+    rf_path    = PREDICTIONS_DIR / "rf_val_preds.npy"
+    bert_path  = PREDICTIONS_DIR / "bert_val_preds.npy"
 
     if not ridge_path.exists():
         raise FileNotFoundError(
@@ -100,8 +100,7 @@ def load_val_preds():
                 f"Run notebooks/bert.ipynb on Colab first."
             )
         bert_preds = np.load(bert_path)[:n]
-        print(f"  Loaded BERT val preds from {bert_path}")
-    else:
+        print(f"  Loaded BERT val preds from {bert_path}")    else:
         print("  [INFO] BERT_READY=False — using dummy BERT preds (uniform random).")
         print("         Set BERT_READY=True after bert.ipynb produces bert_val_preds.npy")
         bert_preds = np.clip(
@@ -188,14 +187,12 @@ def run_phase4():
     print(table.to_string())
 
     # Save ensemble weights → reports/ensemble_weights.json
-    weights_path = REPORTS_DIR / "ensemble_weights.json"
+    weights_path = METRICS_DIR / "ensemble_weights.json"
     with open(weights_path, "w") as f:
         json.dump(best_weights, f, indent=2)
     print(f"\n  Saved → {weights_path}  ← hand off to Person 3")
 
-    # Save ensemble val preds
-    np.save(REPORTS_DIR / "ensemble_val_preds.npy", ensemble_preds)
-
+    np.save(PREDICTIONS_DIR / "ensemble_val_preds.npy", ensemble_preds)
     print("\n" + "=" * 60)
     print("PHASE 4 COMPLETE")
     print(f"  Weights: {best_weights}")

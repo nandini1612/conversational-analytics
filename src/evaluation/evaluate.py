@@ -38,11 +38,11 @@ from phase0_skeleton import (
 
 np.random.seed(RANDOM_STATE)
 
-FEATURES_DIR = ROOT / "data" / "processed"
-MODELS_DIR = ROOT / "models"
-MODELS_SAVED_DIR = ROOT / "models_saved"
-REPORTS_DIR = ROOT / "reports"
-REPORTS_DIR.mkdir(exist_ok=True)
+FEATURES_DIR     = ROOT / "data" / "processed"
+MODELS_DIR       = ROOT / "models"
+PREDICTIONS_DIR  = ROOT / "outputs" / "predictions"
+METRICS_DIR      = ROOT / "outputs" / "metrics"
+METRICS_DIR.mkdir(parents=True, exist_ok=True)
 
 BERT_READY = True  # set True after Colab BERT run
 
@@ -110,7 +110,7 @@ def load_models_and_weights():
     ridge_path = MODELS_DIR / "ridge_model.pkl"
     rf_path = MODELS_DIR / "rf_model.pkl"
     scaler_path = MODELS_DIR / "scaler.pkl"
-    weights_path = REPORTS_DIR / "ensemble_weights.json"
+    weights_path = METRICS_DIR / "ensemble_weights.json"
 
     for path, phase in [
         (ridge_path, "src/models/ridge.py"),
@@ -165,7 +165,7 @@ def run_phase5():
     rf_preds = np.clip(art["rf"].predict(X_test_raw), 1.0, 5.0)
 
     if BERT_READY:
-        bert_test_path = MODELS_SAVED_DIR / "bert_test_preds.npy"
+        bert_test_path = PREDICTIONS_DIR / "bert_test_preds.npy"
         if not bert_test_path.exists():
             raise FileNotFoundError(
                 "bert_test_preds.npy missing but BERT_READY=True. "
@@ -218,7 +218,7 @@ def run_phase5():
     print(table.to_string())
 
     # Save metrics table (Person 4 needs this)
-    table_path = REPORTS_DIR / "test_metrics_table.csv"
+    table_path = METRICS_DIR / "test_metrics_table.csv"
     table.reset_index().to_csv(table_path, index=False)
     print(f"\n  Saved → {table_path}  ← hand off to Person 4")
 
@@ -230,7 +230,7 @@ def run_phase5():
         "rf": rf_preds.tolist(),
         "dataset_mean": float(y_test.mean()),
     }
-    cal_path = REPORTS_DIR / "calibration_data.json"
+    cal_path = METRICS_DIR / "calibration_data.json"
     with open(cal_path, "w") as f:
         json.dump(calibration, f)
     print(f"  Saved → {cal_path}  ← hand off to Person 4")
@@ -266,7 +266,7 @@ def run_phase5():
             "mae_delta": round(delta, 4),
         })
 
-    ablation_path = REPORTS_DIR / "ablation_test.csv"
+    ablation_path = METRICS_DIR / "ablation_test.csv"
     pd.DataFrame(ablation_rows).to_csv(ablation_path, index=False)
     print(f"\n  Saved → {ablation_path}")
 

@@ -37,11 +37,13 @@ from phase0_skeleton import (
 
 np.random.seed(RANDOM_STATE)
 
-FEATURES_DIR = ROOT / "data" / "processed"
-MODELS_DIR = ROOT / "models"
-OUTPUTS_DIR = ROOT / "models_saved"
+FEATURES_DIR  = ROOT / "data" / "processed"
+MODELS_DIR    = ROOT / "models"
+OUTPUTS_DIR   = ROOT / "outputs" / "predictions"
+METRICS_DIR   = ROOT / "outputs" / "metrics"
 MODELS_DIR.mkdir(exist_ok=True)
-OUTPUTS_DIR.mkdir(exist_ok=True)
+OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
+METRICS_DIR.mkdir(parents=True, exist_ok=True)
 
 USE_DUMMY_DATA = False
 
@@ -177,13 +179,13 @@ def run_phase2():
     print(f"\n  Saved → {model_path}")
 
     # Save feature importances JSON
-    imp_path = OUTPUTS_DIR / "feature_importances.json"
+    imp_path = METRICS_DIR / "feature_importances.json"
     with open(imp_path, "w") as f:
         json.dump({"importances": importances, "sorted": sorted_imp}, f, indent=2)
     print(f"  Saved → {imp_path}  ← hand off to Person 3 + 4")
 
     # Save search log
-    search_path = OUTPUTS_DIR / "rf_search.csv"
+    search_path = METRICS_DIR / "rf_search.csv"
     pd.DataFrame(search_rows).to_csv(search_path, index=False)
     print(f"  Saved → {search_path}")
 
@@ -196,8 +198,8 @@ def run_phase2():
     print("PHASE 2 COMPLETE")
     print(f"  Best params: {best_params}")
     print(f"  Val MAE:     {final_m['mae']:.4f}")
-    print("  Files: models/rf_model.pkl, models_saved/feature_importances.json,")
-    print("         models_saved/rf_search.csv, models_saved/rf_val_preds.npy")
+    print("  Files: models/rf_model.pkl, outputs/metrics/feature_importances.json,")
+    print("         outputs/metrics/rf_search.csv, outputs/predictions/rf_val_preds.npy")
     print("  → Hand off rf_model.pkl + feature_importances.json to Person 3 + 4")
     print("=" * 60)
 

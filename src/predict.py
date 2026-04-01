@@ -38,9 +38,9 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "notebooks"))
 sys.path.insert(0, str(ROOT / "src" / "models"))
 
-MODELS_DIR = ROOT / "models"
-MODELS_SAVED_DIR = ROOT / "models_saved"
-REPORTS_DIR = ROOT / "reports"
+MODELS_DIR       = ROOT / "models"
+MODELS_SAVED_DIR = ROOT / "models"          # consolidated — bert_weights here too
+REPORTS_DIR      = ROOT / "outputs" / "metrics"
 
 # Artefact cache — loaded once at import
 _ARTEFACTS: dict = {}

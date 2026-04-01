@@ -253,7 +253,7 @@ def test_p8_ensemble_weights_sum_to_one(w_ridge, w_rf, w_bert):
 
 def test_p8_saved_ensemble_weights_sum_to_one():
     # Feature: person2-models-evaluation, Property 8: Ensemble weights sum to 1.0
-    weights_path = ROOT / "reports" / "ensemble_weights.json"
+    weights_path = ROOT / "outputs" / "metrics" / "ensemble_weights.json"
     if not weights_path.exists():
         pytest.skip("ensemble_weights.json not yet generated")
     with open(weights_path) as f:
@@ -445,10 +445,10 @@ def test_p14_artefacts_non_empty():
     # Feature: person2-models-evaluation, Property 14: All required artefacts are non-empty files after their phase completes
     required_artefacts = [
         ROOT / "models" / "rf_model.pkl",
-        ROOT / "reports" / "ensemble_weights.json",
-        ROOT / "models_saved" / "feature_importances.json",
-        ROOT / "reports" / "test_metrics_table.csv",
-        ROOT / "reports" / "calibration_data.json",
+        ROOT / "outputs" / "metrics" / "ensemble_weights.json",
+        ROOT / "outputs" / "metrics" / "feature_importances.json",
+        ROOT / "outputs" / "metrics" / "test_metrics_table.csv",
+        ROOT / "outputs" / "metrics" / "calibration_data.json",
     ]
 
     missing = []
@@ -465,8 +465,8 @@ def test_p14_artefacts_non_empty():
 
 
 def test_p14_ensemble_weights_schema():
-    # Feature: person2-models-evaluation, Property 14: All required artefacts are non-empty files after their phase completes
-    weights_path = ROOT / "reports" / "ensemble_weights.json"
+    # Feature: person2-models-evaluation, Property 14
+    weights_path = ROOT / "outputs" / "metrics" / "ensemble_weights.json"
     if not weights_path.exists():
         pytest.skip("ensemble_weights.json not yet generated")
 
@@ -479,8 +479,8 @@ def test_p14_ensemble_weights_schema():
 
 
 def test_p14_feature_importances_schema():
-    # Feature: person2-models-evaluation, Property 14: All required artefacts are non-empty files after their phase completes
-    imp_path = ROOT / "models_saved" / "feature_importances.json"
+    # Feature: person2-models-evaluation, Property 14
+    imp_path = ROOT / "outputs" / "metrics" / "feature_importances.json"
     if not imp_path.exists():
         pytest.skip("feature_importances.json not yet generated")
 
@@ -501,8 +501,8 @@ def test_p14_feature_importances_schema():
 
 
 def test_p14_calibration_data_schema():
-    # Feature: person2-models-evaluation, Property 14: All required artefacts are non-empty files after their phase completes
-    cal_path = ROOT / "reports" / "calibration_data.json"
+    # Feature: person2-models-evaluation, Property 14
+    cal_path = ROOT / "outputs" / "metrics" / "calibration_data.json"
     if not cal_path.exists():
         pytest.skip("calibration_data.json not yet generated")
 
@@ -521,9 +521,9 @@ def test_p14_calibration_data_schema():
 
 
 def test_p14_metrics_table_schema():
-    # Feature: person2-models-evaluation, Property 14: All required artefacts are non-empty files after their phase completes
+    # Feature: person2-models-evaluation, Property 14
     import pandas as pd
-    table_path = ROOT / "reports" / "test_metrics_table.csv"
+    table_path = ROOT / "outputs" / "metrics" / "test_metrics_table.csv"
     if not table_path.exists():
         pytest.skip("test_metrics_table.csv not yet generated")
 
