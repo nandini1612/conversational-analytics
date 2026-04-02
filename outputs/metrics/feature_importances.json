@@ -1,0 +1,126 @@
+{
+  "importances": {
+    "mean_sentiment": 0.018018668307751725,
+    "last_20_sentiment": 0.01809212968164247,
+    "std_sentiment": 0.021420119478570615,
+    "talk_time_ratio": 0.006318592412194026,
+    "avg_agent_words": 0.015846857192535476,
+    "avg_customer_words": 0.016748446848378368,
+    "interruption_count": 0.009406415104027753,
+    "resolution_flag": 0.7895980343028272,
+    "empathy_density": 0.014084328782157866,
+    "apology_count": 0.003268137785362365,
+    "transfer_count": 0.0,
+    "duration_ordinal": 0.00036034381437983625,
+    "duration_deviation": 0.008486918631654844,
+    "repeat_contact": 0.07243479566315726,
+    "intent_billing": 0.0008913275220803476,
+    "intent_technical": 0.0005859593936031028,
+    "intent_account": 0.0004965784126459353,
+    "intent_payment": 0.0006146651701442802,
+    "intent_network": 0.00036870495835221125,
+    "intent_delivery": 0.0003971358173624848,
+    "intent_refund": 0.00043112288286567877,
+    "intent_complaint": 0.0006592086204946425,
+    "intent_subscription": 0.000943306203024985,
+    "intent_login": 0.0005282030147865472
+  },
+  "sorted": [
+    [
+      "resolution_flag",
+      0.7895980343028272
+    ],
+    [
+      "repeat_contact",
+      0.07243479566315726
+    ],
+    [
+      "std_sentiment",
+      0.021420119478570615
+    ],
+    [
+      "last_20_sentiment",
+      0.01809212968164247
+    ],
+    [
+      "mean_sentiment",
+      0.018018668307751725
+    ],
+    [
+      "avg_customer_words",
+      0.016748446848378368
+    ],
+    [
+      "avg_agent_words",
+      0.015846857192535476
+    ],
+    [
+      "empathy_density",
+      0.014084328782157866
+    ],
+    [
+      "interruption_count",
+      0.009406415104027753
+    ],
+    [
+      "duration_deviation",
+      0.008486918631654844
+    ],
+    [
+      "talk_time_ratio",
+      0.006318592412194026
+    ],
+    [
+      "apology_count",
+      0.003268137785362365
+    ],
+    [
+      "intent_subscription",
+      0.000943306203024985
+    ],
+    [
+      "intent_billing",
+      0.0008913275220803476
+    ],
+    [
+      "intent_complaint",
+      0.0006592086204946425
+    ],
+    [
+      "intent_payment",
+      0.0006146651701442802
+    ],
+    [
+      "intent_technical",
+      0.0005859593936031028
+    ],
+    [
+      "intent_login",
+      0.0005282030147865472
+    ],
+    [
+      "intent_account",
+      0.0004965784126459353
+    ],
+    [
+      "intent_refund",
+      0.00043112288286567877
+    ],
+    [
+      "intent_delivery",
+      0.0003971358173624848
+    ],
+    [
+      "intent_network",
+      0.00036870495835221125
+    ],
+    [
+      "duration_ordinal",
+      0.00036034381437983625
+    ],
+    [
+      "transfer_count",
+      0.0
+    ]
+  ]
+}

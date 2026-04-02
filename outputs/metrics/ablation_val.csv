@@ -1,0 +1,6 @@
+run,features_removed,n_features,mae,rmse,pearson_r,f1_binary,mae_delta
+all_features,none,24,0.6273,0.7184,0.8475,0.877,0.0
+remove_A_sentiment,A_sentiment,21,0.6255,0.7164,0.8484,0.877,-0.0019
+remove_B_structure,B_structure,19,1.1308,1.3192,0.2264,0.6734,0.5034
+remove_C_agent,C_agent,21,0.6251,0.7156,0.8488,0.877,-0.0022
+remove_D_metadata,D_metadata,11,0.6464,0.7757,0.8196,0.877,0.019

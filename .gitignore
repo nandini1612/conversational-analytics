@@ -4,7 +4,20 @@ __pycache__/
 *.pkl
 *.npy
 data/raw/
-outputs/
 .kiro/
 .hypothesis/
-models/bert_weights/*.safetensors
+
+# Ignore everything inside models
+models/*
+
+# Allow specific files
+!models/ridge_model.pkl
+!models/rf_model.pkl
+!models/scaler.pkl
+
+# Ignore heavy subfolder
+models/bert_weights/
+
+# Ignore large file types
+*.safetensors
+*.npy
