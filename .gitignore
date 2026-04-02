@@ -4,8 +4,7 @@ __pycache__/
 *.pkl
 *.npy
 data/raw/
-models/
 outputs/
 .kiro/
 .hypothesis/
-models_saved/
+models/bert_weights/*.safetensors
