@@ -1,0 +1,49 @@
+{
+  "avg_csat_by_issue": {
+    "account": 3.029,
+    "billing": 3.086,
+    "complaint": 3.206,
+    "delivery": 2.96,
+    "login": 3.166,
+    "network": 3.091,
+    "payment": 3.011,
+    "refund": 2.943,
+    "subscription": 3.269,
+    "technical": 3.103
+  },
+  "avg_csat_by_arc": {
+    "fall": 3.057,
+    "flat": 3.04,
+    "rise": 3.086,
+    "v_shape": 3.169
+  },
+  "repeat_contact_rate_by_issue": {
+    "account": 0.0,
+    "billing": 0.0,
+    "complaint": 0.0,
+    "delivery": 0.0,
+    "login": 0.0,
+    "network": 0.0,
+    "payment": 0.0,
+    "refund": 0.0,
+    "subscription": 0.0,
+    "technical": 0.0
+  },
+  "arc_distribution": {
+    "fall": 26.3,
+    "flat": 25.5,
+    "rise": 24.5,
+    "v_shape": 23.7
+  },
+  "csat_distribution": {
+    "low_1_to_2.5": 33.4,
+    "medium_2.5_to_3.5": 24.6,
+    "high_3.5_to_5": 42.0
+  },
+  "overall_avg_csat": 3.086,
+  "total_calls_in_training": 1750,
+  "duration_distribution": {
+    "long": 66.3,
+    "medium": 33.7
+  }
+}
