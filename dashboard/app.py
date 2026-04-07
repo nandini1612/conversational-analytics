@@ -18,7 +18,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-API_BASE    = "http://localhost:8000"
+API_BASE    = os.environ.get("API_BASE" ,"http://localhost:8000" )
 DATA_DIR    = os.path.join(os.path.dirname(__file__), "..", "data", "processed")
 METRICS_DIR = os.path.join(os.path.dirname(__file__), "..", "outputs", "metrics")
 
